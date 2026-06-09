@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}{% if job %}Edit Job{% else %}Post a Job{% endif %}{% endblock %}
+{% block content %}
+<div class="container page-content">
+  <div style="margin-bottom:1.5rem;">
+    <a href="{{ url_for('dashboard_employer') }}" class="btn btn-ghost btn-sm">← Back to Dashboard</a>
+  </div>
+  <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:1.5rem;">
+    {% if job %}Edit Job Listing{% else %}Post a New Job ✨{% endif %}
+  </h2>
+  <div class="form-card">
+    <form method="POST">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Job Title *</label>
+          <input class="form-control" type="text" name="title" placeholder="e.g. Senior Python Developer"
+                 value="{{ job.title if job else '' }}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company Name *</label>
+          <input class="form-control" type="text" name="company" placeholder="e.g. TechCorp India"
+                 value="{{ job.company if job else '' }}" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input class="form-control" type="text" name="location" placeholder="e.g. Bangalore / Remote"
+                 value="{{ job.location if job else '' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Salary / CTC</label>
+          <input class="form-control" type="text" name="salary" placeholder="e.g. ₹12-18 LPA"
+                 value="{{ job.salary if job else '' }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Job Description *</label>
+        <textarea class="form-control" name="description" rows="6"
+                  placeholder="Describe the role, responsibilities, required skills..." required>{{ job.description if job else '' }}</textarea>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+        <button type="submit" class="btn btn-primary">
+          {% if job %}💾 Save Changes{% else %}🚀 Post Job{% endif %}
+        </button>
+        <a href="{{ url_for('dashboard_employer') }}" class="btn btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

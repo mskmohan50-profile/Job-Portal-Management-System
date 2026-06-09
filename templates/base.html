@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}JobPortal{% endblock %} — Find Your Next Role</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="{{ url_for('home') }}" class="nav-brand">⚡ JobPortal</a>
+  <div class="nav-links">
+    <a href="{{ url_for('home') }}">Browse Jobs</a>
+    {% if session.get('user_id') %}
+      {% if session.get('role') == 'seeker' %}
+        <a href="{{ url_for('dashboard_seeker') }}">My Dashboard</a>
+      {% elif session.get('role') == 'employer' %}
+        <a href="{{ url_for('dashboard_employer') }}">Dashboard</a>
+        <a href="{{ url_for('post_job') }}" class="btn btn-primary btn-sm">+ Post Job</a>
+      {% elif session.get('role') == 'admin' %}
+        <a href="{{ url_for('dashboard_admin') }}">Admin Panel</a>
+      {% endif %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">Log in</a>
+      <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Get Started</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer>
+  <span>© 2026 <strong>JobPortal</strong> — Built with Flask &amp; ❤️</span>
+  <span>Connecting talent with opportunity</span>
+</footer>
+
+</body>
+</html>

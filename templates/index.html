@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">🚀 2026 Job Board</div>
+  <h1>Find a Job You'll<br><span></span></h1>
+  <p class="hero-sub">Thousands of opportunities across India and the world. Get hired by the best companies.</p>
+  <form class="search-form" method="GET" action="{{ url_for('home') }}">
+    <input type="text" name="search" placeholder="Job title or company..." value="{{ search }}">
+    <input type="text" name="location" placeholder="Location or remote..." value="{{ location }}">
+    <button type="submit" class="btn btn-primary">
+      🔍 Search
+    </button>
+  </form>
+</section>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-val">{{ jobs|length }}</span>
+    <span class="stat-label">Active Jobs</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-val">100+</span>
+    <span class="stat-label">Companies</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-val">Free</span>
+    <span class="stat-label">To Apply</span>
+  </div>
+</div>
+
+<!-- Job Listings -->
+<div class="container page-content">
+  <div class="section-header">
+    <h2 class="section-title">
+      {% if search or location %}
+        Search Results
+        {% if search %} for "{{ search }}"{% endif %}
+        {% if location %} in {{ location }}{% endif %}
+      {% else %}
+        Latest Openings
+      {% endif %}
+    </h2>
+    {% if search or location %}
+      <a href="{{ url_for('home') }}" class="btn btn-ghost btn-sm">✕ Clear filters</a>
+    {% endif %}
+  </div>
+
+  {% if jobs %}
+    <div class="jobs-grid">
+      {% for job in jobs %}
+        <a href="{{ url_for('job_detail', job_id=job.id) }}" style="text-decoration:none;">
+        <div class="job-card">
+          <div class="job-card-top">
+            <div>
+              <div class="job-title">{{ job.title }}</div>
+              <div class="job-company">{{ job.company }}</div>
+            </div>
+            <div class="company-logo">{{ job.company[0] }}</div>
+          </div>
+          <div class="job-tags">
+            <span class="tag tag-location">{{ job.location }}</span>
+            {% if job.salary %}
+              <span class="tag tag-salary">{{ job.salary }}</span>
+            {% endif %}
+          </div>
+          <p class="job-desc">{{ job.description }}</p>
+        </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <p>No jobs found. Try a different search.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container page-content">
+  <div style="margin-bottom:1.5rem;">
+    <a href="{{ url_for('home') }}" class="btn btn-ghost btn-sm">← Back to Jobs</a>
+  </div>
+
+  <div class="detail-wrap">
+    <!-- Header card -->
+    <div class="detail-header">
+      <div class="detail-logo">{{ job.company[0] }}</div>
+      <div style="flex:1;">
+        <div class="detail-title">{{ job.title }}</div>
+        <div class="detail-company">{{ job.company }}</div>
+        <div class="detail-meta">
+          <span class="tag tag-location">{{ job.location }}</span>
+          {% if job.salary %}
+            <span class="tag tag-salary">{{ job.salary }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <div style="flex-shrink:0;">
+        {% if user and user.role == 'seeker' %}
+          {% if already_applied %}
+            <button class="btn btn-secondary" disabled>✓ Applied</button>
+          {% else %}
+            <form method="POST" action="{{ url_for('apply', job_id=job.id) }}">
+              <button type="submit" class="btn btn-primary">Apply Now →</button>
+            </form>
+          {% endif %}
+        {% elif not user %}
+          <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Apply</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="detail-body">
+      <h3>Job Description</h3>
+      <p>{{ job.description }}</p>
+    </div>
+
+    <!-- Company info -->
+    <div class="detail-body">
+      <h3>About {{ job.company }}</h3>
+      <p>{{ job.company }} is hiring talented professionals for {{ job.title }} role.
+        Join a team that values innovation, growth, and collaboration.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

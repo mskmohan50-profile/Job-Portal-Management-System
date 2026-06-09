@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="dash-layout">
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <div style="padding:.8rem;margin-bottom:1rem;">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;">{{ user.username }}</div>
+      <span class="badge badge-seeker">Job Seeker</span>
+    </div>
+    <span class="dash-sidebar-title">Menu</span>
+    <a class="dash-link active" href="{{ url_for('dashboard_seeker') }}">
+      <span class="icon">📊</span> Dashboard
+    </a>
+    <a class="dash-link" href="{{ url_for('home') }}">
+      <span class="icon">🔍</span> Browse Jobs
+    </a>
+    <span class="dash-sidebar-title">Account</span>
+    <a class="dash-link" href="{{ url_for('logout') }}">
+      <span class="icon">🚪</span> Log Out
+    </a>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-content">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:2rem;">
+      My Dashboard
+    </h2>
+
+    <!-- Metrics -->
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-icon">📬</div>
+        <div class="metric-val">{{ applied_jobs|length }}</div>
+        <div class="metric-label">Applications</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">✅</div>
+        <div class="metric-val">{{ applied_jobs|selectattr('0.status','equalto','Accepted')|list|length }}</div>
+        <div class="metric-label">Accepted</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">⏳</div>
+        <div class="metric-val">{{ applied_jobs|selectattr('0.status','equalto','Pending')|list|length }}</div>
+        <div class="metric-label">Pending</div>
+      </div>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="section-header">
+      <h3 class="section-title">My Applications</h3>
+      <a href="{{ url_for('home') }}" class="btn btn-primary btn-sm">Browse More Jobs →</a>
+    </div>
+
+    {% if applied_jobs %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th>Company</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app, job in applied_jobs %}
+          <tr>
+            <td><strong>{{ job.title }}</strong></td>
+            <td>{{ job.company }}</td>
+            <td>{{ job.location }}</td>
+            <td>
+              <span class="badge badge-{{ app.status|lower }}">{{ app.status }}</span>
+            </td>
+            <td>
+              <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-ghost btn-sm">View</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <p>No applications yet. <a href="{{ url_for('home') }}">Browse jobs</a> to get started!</p>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

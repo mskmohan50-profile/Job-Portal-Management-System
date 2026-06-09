@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Employer Dashboard{% endblock %}
+{% block content %}
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div style="padding:.8rem;margin-bottom:1rem;">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;">{{ user.username }}</div>
+      <span class="badge badge-employer">Employer</span>
+    </div>
+    <span class="dash-sidebar-title">Menu</span>
+    <a class="dash-link active" href="{{ url_for('dashboard_employer') }}">
+      <span class="icon">📊</span> Dashboard
+    </a>
+    <a class="dash-link" href="{{ url_for('post_job') }}">
+      <span class="icon">➕</span> Post New Job
+    </a>
+    <a class="dash-link" href="{{ url_for('home') }}">
+      <span class="icon">🌐</span> View Portal
+    </a>
+    <span class="dash-sidebar-title">Account</span>
+    <a class="dash-link" href="{{ url_for('logout') }}">
+      <span class="icon">🚪</span> Log Out
+    </a>
+  </aside>
+
+  <main class="dash-content">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:2rem;">
+      Employer Dashboard
+    </h2>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-icon">📋</div>
+        <div class="metric-val">{{ jobs|length }}</div>
+        <div class="metric-label">Active Jobs</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">👥</div>
+        <div class="metric-val">—</div>
+        <div class="metric-label">Total Applicants</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3 class="section-title">My Job Listings</h3>
+      <a href="{{ url_for('post_job') }}" class="btn btn-primary btn-sm">+ Post New Job</a>
+    </div>
+
+    {% if jobs %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Location</th>
+            <th>Salary</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          <tr>
+            <td><strong>{{ job.title }}</strong><br><small style="color:var(--muted)">{{ job.company }}</small></td>
+            <td>{{ job.location }}</td>
+            <td><span class="badge badge-seeker">{{ job.salary }}</span></td>
+            <td style="display:flex;gap:.5rem;flex-wrap:wrap;">
+              <a href="{{ url_for('view_applicants', job_id=job.id) }}" class="btn btn-ghost btn-sm">👥 Applicants</a>
+              <a href="{{ url_for('edit_job', job_id=job.id) }}" class="btn btn-secondary btn-sm">✏️ Edit</a>
+              <form method="POST" action="{{ url_for('delete_job', job_id=job.id) }}" onsubmit="return confirm('Delete this job?')">
+                <button type="submit" class="btn btn-danger btn-sm">🗑️ Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+      </svg>
+      <p>No jobs posted yet. <a href="{{ url_for('post_job') }}">Post your first job!</a></p>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

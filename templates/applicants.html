@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Applicants — {{ job.title }}{% endblock %}
+{% block content %}
+<div class="container page-content">
+  <div style="margin-bottom:1.5rem;">
+    <a href="{{ url_for('dashboard_employer') }}" class="btn btn-ghost btn-sm">← Back to Dashboard</a>
+  </div>
+  <div class="section-header">
+    <div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;">Applicants for: {{ job.title }}</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:.3rem;">{{ job.company }} · {{ job.location }}</p>
+    </div>
+    <span class="badge badge-employer">{{ applicants|length }} Applied</span>
+  </div>
+
+  {% if applicants %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Applicant</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Update Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app, seeker in applicants %}
+        <tr>
+          <td style="color:var(--muted)">#{{ loop.index }}</td>
+          <td><strong>{{ seeker.username }}</strong></td>
+          <td>{{ seeker.email }}</td>
+          <td>
+            <span class="badge badge-{{ app.status|lower }}">{{ app.status }}</span>
+          </td>
+          <td>
+            <form method="POST" action="{{ url_for('update_status', app_id=app.id) }}" style="display:flex;gap:.5rem;align-items:center;">
+              <select name="status" class="form-control" style="padding:.35rem .6rem;font-size:.82rem;width:auto;">
+                <option value="Pending"   {% if app.status=='Pending'   %}selected{% endif %}>Pending</option>
+                <option value="Accepted"  {% if app.status=='Accepted'  %}selected{% endif %}>Accepted</option>
+                <option value="Rejected"  {% if app.status=='Rejected'  %}selected{% endif %}>Rejected</option>
+              </select>
+              <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+    <p>No applicants yet for this job.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
