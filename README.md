@@ -1,245 +1,45 @@
-﻿⚡ JobPortal — Flask Job Board Application
+# ⚡ JobPortal — Flask Job Board
 
-A full-stack job portal web application built with **Flask**, **SQLAlchemy**, and a custom dark-themed UI. Supports three user roles: Job Seeker, Employer, and Admin — each with their own dashboard and permissions.
+Full-stack job portal with role-based access for **Job Seekers**, **Employers**, and **Admins**.
 
----
+## Tech Stack
+- Python, Flask, SQLAlchemy, SQLite, Jinja2, Custom CSS
 
- 📸 Pages Overview
-
-| Page | Route | Access |
-|---|---|---|
-| Home / Job Listings | `/` | Public |
-| Job Detail | `/job/<id>` | Public |
-| Register | `/register` | Public |
-| Login | `/login` | Public |
-| Seeker Dashboard | `/dashboard/seeker` | Seeker only |
-| Employer Dashboard | `/dashboard/employer` | Employer only |
-| Post / Edit Job | `/job/post` | Employer only |
-| View Applicants | `/job/<id>/applicants` | Employer only |
-| Admin Panel | `/dashboard/admin` | Admin only |
-
----
-
- Tech Stack
-
-- **Backend** — Python 3, Flask, Flask-SQLAlchemy
-- **Database** — SQLite (`jobportal.db`)
-- **Auth** — Werkzeug password hashing, Flask session
-- **Frontend** — Jinja2 templates, custom CSS (no frameworks)
-- **Fonts** — Syne (headings), DM Sans (body) via Google Fonts
-
----
- 📁 Project Structure
-
-```
-jobportal/
-├── app.py                    # All Flask routes & app config
-├── models.py                 # SQLAlchemy models (User, Job, Application)
-├── static/
-│   └── style.css             # Full dark theme stylesheet
-└── templates/
-    ├── base.html             # Base layout (navbar, flash, footer)
-    ├── index.html            # Homepage with hero + search + job grid
-    ├── login.html            # Login form
-    ├── register.html         # Register form with role picker
-    ├── job_detail.html       # Job detail + Apply button
-    ├── dashboard_seeker.html # Seeker: application tracker
-    ├── dashboard_employer.html # Employer: job listings manager
-    ├── dashboard_admin.html  # Admin: users + jobs overview
-    ├── post_job.html         # Post / Edit job form
-    └── applicants.html       # Applicants list with status control
-```
-
----
-
- Installation & Setup
-
- 1. Clone or extract the project
-
-```bash
-cd jobportal
-```
-
-2. Create a virtual environment (recommended)
-
-```bash
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
-```
-
- 3. Install dependencies
-
+## Setup
 ```bash
 pip install flask flask-sqlalchemy werkzeug
-```
-
-### 4. Run the app
-
-```bash
 python app.py
+# Visit → http://127.0.0.1:5000
 ```
 
-5. Open in browser
-
-```
-http://127.0.0.1:5000
-```
-
-> The database (`jobportal.db`) is created automatically on first run.
-
-
-
- Seed Data
-
-Visit this URL once to populate the database with sample jobs and users:
-
-```
-http://127.0.0.1:5000/seed
-```
-
-### Default accounts after seeding
+## Seed Data
+Visit `/seed` once to load sample jobs, then log in with:
 
 | Role | Username | Password |
 |---|---|---|
-| 🛡️ Admin | `admin` | `admin123` |
-| 🏢 Employer | `employer1` | `emp123` |
-| 🧑‍💼 Job Seeker | `seeker1` | `seek123` |
+| Admin | `admin` | `admin123` |
+| Employer | `employer1` | `emp123` |
+| Seeker | `seeker1` | `seek123` |
 
----
+## Features
+- Browse & search jobs
+- Apply to jobs (seekers)
+- Post, edit, delete jobs (employers)
+- Review & update applicant status
+- Admin panel for full oversight
+- Password hashing, session auth, flash messages
 
- Role Permissions
-
- Job Seeker
-- Browse and search all job listings
-- View full job details
-- Apply to jobs (one application per job)
-- Track application status (Pending / Accepted / Rejected) on dashboard
-
- Employer
-- Post new job listings
-- Edit or delete own job listings
-- View all applicants for each job
-- Update applicant status (Pending → Accepted / Rejected)
-
- Admin
-- View all users and all jobs
-- Delete any user or job listing
-- Full oversight of the platform
-
----
-
- Database Models
-
-### `User`
-| Column | Type | Description |
-|---|---|---|
-| id | Integer | Primary key |
-| username | String(100) | Unique username |
-| email | String(120) | Email address |
-| password | String(255) | Hashed password |
-| role | String(20) | `admin` / `employer` / `seeker` |
-
-### `Job`
-| Column | Type | Description |
-|---|---|---|
-| id | Integer | Primary key |
-| title | String(200) | Job title |
-| company | String(200) | Company name |
-| location | String(200) | Location or Remote |
-| salary | String(100) | Salary / CTC range |
-| description | Text | Full job description |
-| employer_id | Integer | FK → User.id |
-
-### `Application`
-| Column | Type | Description |
-|---|---|---|
-| id | Integer | Primary key |
-| user_id | Integer | FK → User.id (seeker) |
-| job_id | Integer | FK → Job.id |
-| status | String(50) | `Pending` / `Accepted` / `Rejected` |
-
----
-
- Key Features
-
-- **Role-Based Access Control** — decorators `@login_required` and `@role_required` protect all routes
-- **Password Hashing** — Werkzeug `generate_password_hash` / `check_password_hash`
-- **Search & Filter** — Search jobs by title, company, or location on the homepage
-- **Flash Messages** — Success, error, warning, and info feedback on every action
-- **One Application Per Job** — Duplicate applications are prevented at the DB level
-- **Applicant Status Management** — Employers can accept or reject applicants
-- **Responsive Design** — Mobile-friendly layout with sidebar hidden on small screens
-
----
-
- Configuration
-
-Edit these lines in `app.py` to change settings:
-
-```python
-app.config['SECRET_KEY'] = 'your_secret_key_here'       # Change in production!
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobportal.db'  # or PostgreSQL URI
+## Project Structure
+```
+jobportal/
+├── app.py
+├── models.py
+├── static/style.css
+└── templates/
+    ├── base.html, index.html, login.html, register.html
+    ├── job_detail.html, post_job.html, applicants.html
+    └── dashboard_seeker/employer/admin.html
 ```
 
- Switch to PostgreSQL
-
-```bash
-pip install psycopg2-binary
-```
-
-```python
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:password@localhost/jobportal'
-```
-
----
-
-## 🚀 Deployment (Render / Railway)
-
-1. Add a `requirements.txt`:
-```bash
-pip freeze > requirements.txt
-```
-
-2. Add a `Procfile`:
-```
-web: gunicorn app:app
-```
-
-3. Install gunicorn:
-```bash
-pip install gunicorn
-```
-
-4. Push to GitHub → connect to Render or Railway → deploy.
-
----
-
- Dependencies
-
-```
-flask
-flask-sqlalchemy
-werkzeug
-```
-
-Generate `requirements.txt`:
-```bash
-pip freeze > requirements.txt
-```
-
----
-
-## 📝 License
-
-MIT License — free to use, modify, and distribute.
-
----
-
-## 👨‍💻 Author
-
-Built with Flask + ❤️ | [GitHub](https://github.com/mskmohan50-profile) · [LinkedIn](https://linkedin.com/in/mohan-raj-g-6670b7299)
+## Author
+[GitHub](https://github.com/mskmohan50-profile) · [LinkedIn](https://linkedin.com/in/mohan-raj-g-6670b7299)
